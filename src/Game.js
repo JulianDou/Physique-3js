@@ -63,6 +63,11 @@ export class Game {
             this.ui.initMinimap(track.skeletonPoints);
         }
         
+        // Setup track import functionality
+        this.ui.setupTrackImport((trackData) => {
+            this.loadCustomTrack(trackData);
+        });
+        
         // Create local car
         this.localCar = new Car(this.sceneManager.getScene(), true);
         
@@ -693,5 +698,46 @@ export class Game {
         
         // Render
         this.renderer.render(this.sceneManager.getScene(), this.camera.getCamera());
+    }
+
+    /**
+     * Load a custom track from imported JSON data
+     */
+    loadCustomTrack(trackData) {
+        console.log('Loading custom track into game...');
+        
+        // Load the custom track in the scene
+        const newTrack = this.sceneManager.loadCustomTrack(trackData);
+        
+        // Update game state with new track
+        this.gameState.setTrack(newTrack);
+        
+        // Reinitialize minimap with new track
+        if (newTrack && newTrack.skeletonPoints) {
+            this.ui.initMinimap(newTrack.skeletonPoints);
+        }
+        
+        // Reset game state
+        this.gameState.reset();
+        this.gameState.setCanPlay(true);
+        
+        // Reset and respawn local car
+        if (this.localCar) {
+            const spawn = this.gameState.getRandomSpawnPosition();
+            this.localCar.spawn(spawn.x, spawn.y, spawn.z, spawn.rotY);
+            this.localCar.reset();
+        }
+        
+        // Reset remote players
+        this.remotePlayers.forEach((player) => {
+            player.lives = 3;
+            player.isDead = false;
+            player.resetLapProgress();
+        });
+        
+        // Reset camera
+        this.camera.exitSpectatorMode();
+        
+        console.log('Custom track loaded and game reset!');
     }
 }

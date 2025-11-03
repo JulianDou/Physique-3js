@@ -39,6 +39,10 @@ export class UIManager {
                 <div>Particules</div>
                 <div id="hud-particles">0</div>
             </div>
+            <hr style="border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 10px 0;">
+            <button id="import-track-btn" class="host-btn primary" style="width: 100%; margin-top: 5px;">
+                📁 Import Track
+            </button>
         `;
         document.body.appendChild(this.hud);
 
@@ -47,6 +51,13 @@ export class UIManager {
         this.hudElements.boostFill = document.getElementById('hud-boost-fill');
         this.hudElements.particles = document.getElementById('hud-particles');
         this.hudElements.lap = document.getElementById('hud-lap');
+
+        // Create hidden file input for track import
+        this.trackFileInput = document.createElement('input');
+        this.trackFileInput.type = 'file';
+        this.trackFileInput.accept = '.json';
+        this.trackFileInput.style.display = 'none';
+        document.body.appendChild(this.trackFileInput);
 
         // Create now playing notification
         this._createNowPlaying();
@@ -671,5 +682,48 @@ export class UIManager {
         const normalized = (worldZ - bounds.minZ) / (bounds.maxZ - bounds.minZ);
         // Invert Y axis for canvas
         return canvas.height - (padding + normalized * (canvas.height - padding * 2));
+    }
+
+    /**
+     * Setup track import functionality
+     */
+    setupTrackImport(callback) {
+        const importBtn = document.getElementById('import-track-btn');
+        
+        importBtn.addEventListener('click', () => {
+            this.trackFileInput.click();
+        });
+        
+        this.trackFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    
+                    if (!data.points || !Array.isArray(data.points)) {
+                        throw new Error('Invalid track data format');
+                    }
+                    
+                    // Call the callback with the loaded data
+                    if (callback) {
+                        callback(data);
+                    }
+                    
+                    // Show success message
+                    this.showGameMessage('Track Loaded!', `Custom track with ${data.points.length} points loaded successfully.`, 'success');
+                    
+                } catch (error) {
+                    console.error('Error loading track:', error);
+                    this.showGameMessage('Import Failed', 'Failed to load track: ' + error.message, 'defeat');
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset file input so the same file can be loaded again
+            e.target.value = '';
+        });
     }
 }

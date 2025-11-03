@@ -6,7 +6,7 @@ import * as THREE from 'three';
  * then build the track geometry around those points
  */
 export class Track {
-    constructor(scene) {
+    constructor(scene, customData = null) {
         this.scene = scene;
         
         // Track configuration
@@ -29,8 +29,16 @@ export class Track {
         this.checkpoints = []; // Array of checkpoint data
         this.numCheckpoints = 4; // Number of validation checkpoints (excluding finish line)
         
-        // Generate the track
-        this._generateSkeleton();
+        // Custom track data
+        this.isCustomTrack = customData !== null;
+        
+        // Generate or load the track
+        if (customData) {
+            this._loadCustomTrack(customData);
+        } else {
+            this._generateSkeleton();
+        }
+        
         this._createSegments();
         this._buildTrack();
         this._buildWalls();
@@ -169,6 +177,105 @@ export class Track {
         this.trackCurve.closed = true;
         
         console.log(`Track skeleton generated with ${this.skeletonPoints.length} points (varied radius and altitude)`);
+    }
+
+    /**
+     * Load a custom track from editor JSON data
+     * Converts 2D editor coordinates to 3D track coordinates
+     */
+    _loadCustomTrack(customData) {
+        console.log('Loading custom track from editor data');
+        
+        if (!customData.points || customData.points.length < 3) {
+            console.error('Invalid custom track data - not enough points');
+            this._generateSkeleton(); // Fallback to generated track
+            return;
+        }
+        
+        // Apply custom track settings if available
+        if (customData.settings) {
+            // Convert editor track width (pixels) to 3D track width
+            // Editor width is in pixels (20-100), 3D width is in units (8-16)
+            if (customData.settings.trackWidth) {
+                this.trackWidth = 8 + (customData.settings.trackWidth - 20) / 80 * 8;
+                this.trackWidth = Math.max(8, Math.min(16, this.trackWidth));
+            }
+        }
+        
+        // Convert 2D editor points to 3D track points
+        // Editor uses X,Y in screen space, we need X,Z in world space with Y for altitude
+        const editorPoints = customData.points;
+        
+        // Check if editor provided grid scale information
+        let scale;
+        if (customData.editor && customData.editor.gridSize && customData.editor.gridScale) {
+            // Use the grid-based scale: gridScale units per gridSize pixels
+            // For example: 10 units per 50 pixels = 0.2 units per pixel
+            const unitsPerPixel = customData.editor.gridScale / customData.editor.gridSize;
+            scale = unitsPerPixel;
+            console.log(`Using grid-based scale: ${customData.editor.gridSize}px = ${customData.editor.gridScale} units (${unitsPerPixel} units/px)`);
+        } else {
+            // Fallback to old auto-scaling method
+            // Find bounding box of editor points
+            let minX = Infinity, maxX = -Infinity;
+            let minY = Infinity, maxY = -Infinity;
+            
+            for (const p of editorPoints) {
+                minX = Math.min(minX, p.x);
+                maxX = Math.max(maxX, p.x);
+                minY = Math.min(minY, p.y);
+                maxY = Math.max(maxY, p.y);
+            }
+            
+            const scaleX = maxX - minX;
+            const scaleY = maxY - minY;
+            const maxScale = Math.max(scaleX, scaleY);
+            
+            // Target size for the track in 3D world (much larger to match generated tracks)
+            const targetSize = 200; // Increased from 140 to make tracks much larger
+            scale = targetSize / maxScale;
+            console.log(`Using auto-scale: ${maxScale.toFixed(0)}px → ${targetSize} units (${scale.toFixed(3)} units/px)`);
+        }
+        
+        // Find center of editor points for centering
+        let minX = Infinity, maxX = -Infinity;
+        let minY = Infinity, maxY = -Infinity;
+        
+        for (const p of editorPoints) {
+            minX = Math.min(minX, p.x);
+            maxX = Math.max(maxX, p.x);
+            minY = Math.min(minY, p.y);
+            maxY = Math.max(maxY, p.y);
+        }
+        
+        const centerX = (minX + maxX) / 2;
+        const centerY = (minY + maxY) / 2;
+        
+        console.log(`Track center: (${centerX.toFixed(1)}, ${centerY.toFixed(1)}) in editor space`);
+        
+        // Convert points
+        this.skeletonPoints = [];
+        for (const p of editorPoints) {
+            // Center and scale the points
+            const x = (p.x - centerX) * scale;
+            const z = (p.y - centerY) * scale; // Y in editor becomes Z in 3D
+            const y = 0; // Start with flat track (can add altitude later)
+            
+            this.skeletonPoints.push(new THREE.Vector3(x, y, z));
+        }
+        
+        // Create smooth curve from skeleton points
+        const closedLoop = customData.settings?.closedLoop !== false; // Default to closed
+        const curvePoints = [...this.skeletonPoints];
+        
+        if (closedLoop) {
+            curvePoints.push(this.skeletonPoints[0].clone()); // Close the loop
+        }
+        
+        this.trackCurve = new THREE.CatmullRomCurve3(curvePoints);
+        this.trackCurve.closed = closedLoop;
+        
+        console.log(`Custom track loaded with ${this.skeletonPoints.length} points (${closedLoop ? 'closed' : 'open'} loop)`);
     }
 
     /**

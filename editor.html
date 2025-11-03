@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Editor - FloVrouuum</title>
+    <link rel="stylesheet" href="editor-styles.css">
+</head>
+<body>
+    <div class="editor-container">
+        <!-- Header -->
+        <header class="editor-header">
+            <h1>🏁 Track Editor</h1>
+            <div class="header-actions">
+                <button id="backBtn" class="btn btn-secondary">← Back to Game</button>
+            </div>
+        </header>
+
+        <!-- Main Editor Area -->
+        <div class="editor-content">
+            <!-- Canvas Area -->
+            <div class="canvas-container">
+                <canvas id="trackCanvas"></canvas>
+                <div class="canvas-info">
+                    <span id="mousePos">X: 0, Y: 0</span>
+                    <span id="pointCount">Points: 0</span>
+                </div>
+            </div>
+
+            <!-- Sidebar Controls -->
+            <aside class="editor-sidebar">
+                <div class="control-panel">
+                    <h2>Tools</h2>
+                    
+                    <div class="tool-group">
+                        <label>Drawing Mode:</label>
+                        <div class="button-group">
+                            <button id="drawMode" class="tool-btn active" data-mode="draw">
+                                ✏️ Draw
+                            </button>
+                            <button id="editMode" class="tool-btn" data-mode="edit">
+                                🔧 Edit
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <label for="trackWidth">Track Width: <span id="trackWidthValue">40</span>px</label>
+                        <input type="range" id="trackWidth" min="20" max="100" value="40" step="5">
+                    </div>
+
+                    <div class="tool-group">
+                        <label for="smoothness">Curve Smoothness: <span id="smoothnessValue">0.5</span></label>
+                        <input type="range" id="smoothness" min="0" max="1" value="0.5" step="0.1">
+                    </div>
+
+                    <div class="tool-group">
+                        <label>
+                            <input type="checkbox" id="showGrid">
+                            Show Grid
+                        </label>
+                        <label>
+                            <input type="checkbox" id="snapToGrid">
+                            Snap to Grid
+                        </label>
+                        <div style="margin-top: 8px; padding: 8px; background: rgba(0,255,0,0.1); border-radius: 4px; font-size: 0.85rem;">
+                            <strong>📏 Grid Scale:</strong><br>
+                            1 square = 10 units in game
+                        </div>
+                    </div>
+
+                    <div class="tool-group">
+                        <label>
+                            <input type="checkbox" id="closedLoop" checked>
+                            Closed Loop (Circuit)
+                        </label>
+                    </div>
+
+                    <hr>
+
+                    <div class="action-group">
+                        <button id="clearBtn" class="btn btn-warning">🗑️ Clear Track</button>
+                        <button id="undoBtn" class="btn btn-secondary">↶ Undo</button>
+                        <button id="centerBtn" class="btn btn-secondary">🎯 Center View</button>
+                    </div>
+
+                    <hr>
+
+                    <div class="action-group">
+                        <button id="exportBtn" class="btn btn-primary" disabled>
+                            💾 Export JSON
+                        </button>
+                        <button id="importBtn" class="btn btn-secondary">
+                            📁 Import JSON
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Instructions -->
+                <div class="instructions">
+                    <h3>Instructions</h3>
+                    <ul>
+                        <li><strong>Draw Mode:</strong> Click to add points and create your track</li>
+                        <li><strong>Edit Mode:</strong> Drag points to adjust the track shape</li>
+                        <li><strong>Delete:</strong> Right-click a point to remove it</li>
+                        <li><strong>Pan:</strong> Hold Space + Drag to move the view</li>
+                        <li><strong>Zoom:</strong> Use mouse wheel to zoom in/out</li>
+                        <li><strong>Grid:</strong> Enable grid to see scale - each square = 10 units in-game</li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="fileInput" accept=".json" style="display: none;">
+
+    <script type="module" src="./src/editor/TrackEditor.js"></script>
+</body>
+</html>

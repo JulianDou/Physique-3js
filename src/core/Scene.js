@@ -59,6 +59,19 @@ export class SceneManager {
         console.log('Track regenerated with new layout');
     }
 
+    /**
+     * Load a custom track from JSON data
+     */
+    loadCustomTrack(customData) {
+        if (this.track) {
+            this.track.destroy();
+            this.track = null;
+        }
+        this.track = new Track(this.scene, customData);
+        console.log('Custom track loaded');
+        return this.track;
+    }
+
     getTrack() {
         return this.track;
     }

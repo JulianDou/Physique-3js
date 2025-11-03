@@ -1,0 +1,336 @@
+/* Editor Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #ffffff;
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* Editor Container */
+.editor-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* Header */
+.editor-header {
+    background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(20,20,30,0.95) 100%);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid rgba(0,255,0,0.3);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.editor-header h1 {
+    font-size: 1.8rem;
+    color: #00ff00;
+    text-shadow: 0 0 10px rgba(0,255,0,0.5);
+    letter-spacing: 2px;
+}
+
+/* Main Content Area */
+.editor-content {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+/* Canvas Container */
+.canvas-container {
+    flex: 1;
+    position: relative;
+    background: #0a0a0a;
+    border-right: 2px solid rgba(255,255,255,0.1);
+}
+
+#trackCanvas {
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+    display: block;
+}
+
+#trackCanvas.pan-mode {
+    cursor: grab;
+}
+
+#trackCanvas.pan-mode:active {
+    cursor: grabbing;
+}
+
+#trackCanvas.edit-mode {
+    cursor: move;
+}
+
+.canvas-info {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(0,0,0,0.8);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    display: flex;
+    gap: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.canvas-info span {
+    color: #00ff00;
+}
+
+/* Sidebar */
+.editor-sidebar {
+    width: 320px;
+    background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(20,20,30,0.95) 100%);
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.control-panel h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: #00ff00;
+    text-shadow: 0 0 10px rgba(0,255,0,0.3);
+}
+
+/* Tool Groups */
+.tool-group {
+    margin-bottom: 1.5rem;
+}
+
+.tool-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: rgba(255,255,255,0.8);
+    font-size: 0.9rem;
+}
+
+.tool-group input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+/* Button Group */
+.button-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Tool Buttons */
+.tool-btn {
+    flex: 1;
+    padding: 0.75rem;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tool-btn:hover {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(0,255,0,0.5);
+    transform: translateY(-2px);
+}
+
+.tool-btn.active {
+    background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+    border-color: #00ff00;
+    color: #000000;
+    font-weight: bold;
+    box-shadow: 0 0 20px rgba(0,255,0,0.5);
+}
+
+/* Range Sliders */
+input[type="range"] {
+    width: 100%;
+    height: 6px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 3px;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #00ff00;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,255,0,0.5);
+    transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    background: #00ff00;
+    box-shadow: 0 0 20px rgba(0,255,0,0.8);
+    transform: scale(1.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: #00ff00;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0,255,0,0.5);
+    border: none;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+    color: #000000;
+    box-shadow: 0 4px 15px rgba(0,255,0,0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: linear-gradient(135deg, #00ff00 0%, #00ff00 100%);
+    box-shadow: 0 6px 25px rgba(0,255,0,0.5);
+    transform: translateY(-2px);
+}
+
+.btn-primary:disabled {
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.3);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn-secondary {
+    background: rgba(255,255,255,0.1);
+    color: #ffffff;
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+.btn-secondary:hover {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.4);
+    transform: translateY(-2px);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(255,68,68,0.3);
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #ff6666 0%, #ff4444 100%);
+    box-shadow: 0 6px 25px rgba(255,68,68,0.5);
+    transform: translateY(-2px);
+}
+
+/* Action Groups */
+.action-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin: 1rem 0;
+}
+
+/* Instructions */
+.instructions {
+    background: rgba(0,255,0,0.05);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(0,255,0,0.2);
+    margin-top: auto;
+}
+
+.instructions h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: #00ff00;
+}
+
+.instructions ul {
+    list-style: none;
+    padding: 0;
+}
+
+.instructions li {
+    padding: 0.4rem 0;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.4;
+}
+
+.instructions strong {
+    color: #00ff00;
+}
+
+/* Scrollbar Styling */
+.editor-sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.editor-sidebar::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.3);
+}
+
+.editor-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(0,255,0,0.3);
+    border-radius: 4px;
+}
+
+.editor-sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(0,255,0,0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .editor-sidebar {
+        width: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+    .editor-content {
+        flex-direction: column;
+    }
+
+    .editor-sidebar {
+        width: 100%;
+        max-height: 40vh;
+    }
+
+    .canvas-container {
+        border-right: none;
+        border-bottom: 2px solid rgba(255,255,255,0.1);
+    }
+}

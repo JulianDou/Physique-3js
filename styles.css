@@ -27,6 +27,40 @@ html, body {
   display: block;
 }
 
+/* Editor Button - Top Left */
+.editor-link {
+  position: fixed;
+  left: 20px;
+  top: 20px;
+  z-index: 1001;
+  pointer-events: auto;
+}
+
+.editor-link a {
+  display: inline-block;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(20,20,20,0.9) 100%);
+  color: #00ff00;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 2px solid rgba(0,255,0,0.3);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.editor-link a:hover {
+  background: linear-gradient(135deg, #00ff00 0%, #00cc00 100%);
+  color: #000;
+  border-color: #00ff00;
+  box-shadow: 0 6px 25px rgba(0,255,0,0.5);
+  transform: translateY(-2px);
+}
+
 /* HUD styles - Amélioré */
 .hud {
   position: fixed;
